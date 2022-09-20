@@ -30,11 +30,14 @@ const loginUser = async function (req, res) {
         {
           userId: user._id.toString(),
           batch: "project3",
-          organisation: "group37"
+          organisation: "group37",
+          iat: Date.now() /1000, 
         },
-        "functionup-plutonium" ,
-        {expiresIn: '24h'}
+        "functionup-plutonium",
+        {expiresIn: Math.floor(Date.now() / 1000) + 10 * 60 * 60}
+        
       );
+  
      
       res.status(200).send({ status: true, message:"Success" ,data: token  });
   
