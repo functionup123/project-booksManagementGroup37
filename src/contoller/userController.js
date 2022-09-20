@@ -1,18 +1,23 @@
 const userModel = require("../models/userModel.js");
 const jwt = require("jsonwebtoken");
-const { findOne } = require("../models/userModel.js");
+
 
 const createUser = async function (req, res) {
     try {
         let data = req.body;
         let { title, name, phone, email, password, address } = data
-        if (Object.keys(data).length == 0) {
+        if (Object.keys(data).length == 0||data==undefined||data==null) {
             return res.status(400).send({
                 status: false, message: "body is empty",
             });
         }
         if (!title) { return res.status(400).send({ status: false, message: "please give a title" }) }
+        if (title.includes(" ")) {
+            return res.status(400).send({ status: false, message: "Space is not allowed" })
+        }
+       
         if (title != "Mr" && title != "Miss" && title != "Mrs") { return res.status(400).send({ status: false, message: "title should be Mr,Miss,Mrs" }) }
+        
         if (!name) { return res.status(400).send({ status: false, message: "name is mandatory" }) }
         if (!(/^[a-z ,.'-]+$/i.test(name))) { return res.status(400).send({ status: false, message: "numeric values and special characters not allowed" }) }
         if (!phone) { return res.status(400).send({ status: false, message: "please enter phone number" }) }
@@ -28,9 +33,16 @@ const createUser = async function (req, res) {
         if (findEmail) { return res.status(400).send({ status: false, message: "email should be unique" }) }
         if (!password) { return res.status(400).send({ status: false, message: "password is mandatory" }) }
         if (password.length < 8 || password.length > 15) { return res.status(400).send({ status: false, message: "password's length must not be less than 8 and greater then 15" }) }
+        let document ={
+            title :title.trim(),
+            name :name.trim(),
+           phone:phone,
+            email :email.toLowerCase(),
+            password:password.trim()
+            
+        }
 
-
-        const userData = await userModel.create(data);
+        const userData = await userModel.create(document);
         res.status(201).send({ status: true, message: userData });
 
     } catch (err) {
