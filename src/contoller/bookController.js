@@ -1,5 +1,6 @@
 const bookModel=require('../models/booksModel')
-
+const reviewModel=require('../models/reviewModel')
+const mongoose = require('mongoose')
 
 
 const createBook=async function(req,res){
@@ -34,5 +35,42 @@ catch (err) {
 }
 }
 
+const getBooksByParams = async function (req, res) {
+  
+  try {
+      let bookId = req.params.bookId
+      let book = mongoose.Types.ObjectId.isValid(bookId)
+      if (!book) {
+          return res.status(400).send({ status: false, message: "Book Id is required in path params!" })
+      }
+      let isValid = await bookModel.findOne({ _id: bookId });
+      if (!isValid) {
+          return res.status(404).send({
+              status: false,
+              message:
+                  "No book is present with this id !",
+          });
+      }
+      // review alike
+      const { title, excerpt, userId,ISBN,category,subcategory, reviews,isDeleted,releasedAt } = isValid
+       const review = await reviewModel.find({bookId : isValid._id }).select({ bookId:1,reviewedBy:1,reviewedAt:1,rating:1,review:1 })
 
-module.exports={ createBook,getBooks}
+      const data = {
+          title: title,
+          excerpt: excerpt,
+          userId: userId,
+          ISBN:ISBN,
+        category:category,
+        subcategory:subcategory,
+        isDeleted:isDeleted,
+        releasedAt:releasedAt,
+         reviews: review.length ? review : { message: "0 review for this Book." }
+      }
+      return res.status(200).send({ status: true, data: data })
+
+  } catch (err) {
+      return res.status(500).send({ status: false, Error: err.message });
+  }
+};
+
+module.exports={ createBook,getBooks,getBooksByParams}

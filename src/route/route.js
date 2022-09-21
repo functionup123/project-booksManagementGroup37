@@ -17,5 +17,5 @@ route.post('/register',createUserValiation.cuv,userController.createUser)
 route.post('/login', userController.loginUser)
 route.post('/books',middleware. authentication,createBookValiation.cbv, bookController.createBook)
 route.get('/books',middleware. authentication,bookController.getBooks)
-
+route.get('/books/:bookId', bookController.getBooksByParams)
 module.exports = route;
