@@ -79,7 +79,8 @@ const loginUser = async function (req, res) {
         organisation: "group37",
       },
       "functionup-plutonium",
-      { expiresIn: "24h" }
+      { expiresIn: "24h" },
+      
     );
 
     res.status(200).send({ status: true, message: "Success", data: token });
