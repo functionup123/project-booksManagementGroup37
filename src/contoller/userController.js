@@ -1,5 +1,6 @@
 const userModel =require('../models/userModel.js')
 const jwt = require("jsonwebtoken");
+const moment=require('moment')
 
 const createUser = async function (req, res) {
   try {
@@ -79,11 +80,15 @@ const loginUser = async function (req, res) {
         organisation: "group37",
       },
       "functionup-plutonium",
-      { expiresIn: "24h" },
-      
+      { expiresIn: "24h" }
     );
-
-    res.status(200).send({ status: true, message: "Success", data: token });
+      let Token={
+        token:token,
+        userId:user._id.toString(),
+        expiry: "24h",  
+        iat:moment().format('MMMM Do YYYY, h:mm:ss a')
+      }
+    res.status(200).send({ status: true, message: "Success", data: Token });
   } catch (err) {
     res.status(500).send({ message: "server error", error: err });
   }

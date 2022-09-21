@@ -16,5 +16,6 @@ route.get("/test-me", (req, res) => {
 route.post('/register',createUserValiation.cuv,userController.createUser)
 route.post('/login', userController.loginUser)
 route.post('/books',middleware. authentication,createBookValiation.cbv, bookController.createBook)
+route.get('/books',middleware. authentication,bookController.getBooks)
 
 module.exports = route;
