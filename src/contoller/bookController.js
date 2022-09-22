@@ -25,7 +25,7 @@ let { userId, category, subcategory} = req.query
   if (category) { filter.category = category }
   if (subcategory) { filter.subcategory =subcategory  }
 
-  let savedData = await bookModel.find(filter).select({ title:1, excerpt:1, userId:1, category:1, releasedAt:1, reviews:1,subcategory:1})
+  let savedData = await bookModel.find(filter).select({ title:1, excerpt:1, userId:1, category:1, releasedAt:1, reviews:1,subcategory:1}).sort({title:-1})
   let count = await bookModel.find(filter).count()
   if (savedData.length == 0) {
     return res.status(404).send({ status: false, message: "no document found" })
@@ -90,70 +90,7 @@ const getBooksByParams = async function (req, res) {
 const updateBook=async function (req,res){
   try{
     let bookId=req.params.bookId;
-    if (!bookId)
-    {
-        return res
-       .status(400)
-       .send({status:false,message:"Book id is required"});
-    }
-    let requestBody=req.body;
-    let {title,excerpt,releasedAt,ISBN}=requestBody;
-    if (title)
-    {
-       if (title)
-       {
-         return res
-        .status(400)
-        .send({status:false,message:"Provide a valid Title"});
-       }
-      if (excerpt)
-      {
-        if(excerpt){
-          return res
-          .status(400)
-          .send({Status:false,message:"[provide a valid excerpt"});
-        }
-      }
-      if (userId) 
-      {
-        return res
-          .status(400)
-          .send({ status: false, message: "User Id is required" });
-      }
-      if (ISBN) {
-        return res
-          .status(400)
-          .send({ status: false, message: " ISBN is required" });
-      }
-      if (ISBN) {
-        return res.status(400).send({
-          status: false,
-          message: "  ISBN and should be 10 or 13 digits",
-        });
-      }
-      if (category){
-        return res.status(400).send({
-          status: false,
-          message: "Please provide a category or a Valid category",
-        });
-      }
-
-  if (subcategory) {
-      return res.status(400).send({
-        status: false,
-        message: "Please provide a subcategory or a Valid subcategory",
-      });
-    }
-    if (releasedAt) 
-    {
-      return res.status(400).send(
-      {
-        status: false,
-        message: "please provide releaseAt or valid releasedAt",});
-    }
-
-    }
-    let bookUpdated = await bookModel.findOneAndUpdate(
+     let bookUpdated = await bookModel.findOneAndUpdate(
       { _id: bookId },
       {
         $set: {

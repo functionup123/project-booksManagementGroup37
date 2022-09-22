@@ -23,16 +23,16 @@ const authentication = async function (req, res, next) {
 
 let authorisation =async function (req, res, next) {
       try {
-    //     let authorLoggedIn = req.token.userId;
-    //     let bookId = req.params.bookId;
-    //     let checkBookId = await bookModel.findById(bookId)
-    //     if (!checkBookId) {
-    //       return res.status(404).send({status: false, message: "Book not Found"})
-    //   }
-    //   let reqUser=checkBookId.authorId
-    //     if ( reqUser != authorLoggedIn) {
-    //       return res.status(403).send({status: false,msg: "loggedin author not allowed to modify changes"});
-    //     }
+        let authorLoggedIn = req.token.userId;
+        let bookId = req.params.bookId;
+        let checkBookId = await bookModel.findById(bookId)
+        if (!checkBookId) {
+          return res.status(404).send({status: false, message: "Book not Found"})
+      }
+      let reqUser=checkBookId.authorId
+        if ( reqUser != authorLoggedIn) {
+          return res.status(403).send({status: false,msg: "loggedin author not allowed to modify changes"});
+        }
         next();
       } catch (err) {
         return res.status(500).send({ status: false, msg: err.messge });
