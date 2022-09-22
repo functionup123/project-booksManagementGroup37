@@ -25,14 +25,16 @@ let { userId, category, subcategory} = req.query
   if (category) { filter.category = category }
   if (subcategory) { filter.subcategory =subcategory  }
 
-  let savedData = await bookModel.find(filter).select({ title:1, excerpt:1, userId:1, category:1, releasedAt:1, reviews:1,subcategory:1})
+  let savedData = await bookModel.find(filter).select({ title:1, excerpt:1, userId:1, category:1, releasedAt:1, reviews:1,subcategory:1,ISBN:1})
+
   let count = await bookModel.find(filter).count()
   if (savedData.length == 0) {
     return res.status(404).send({ status: false, message: "no document found" })
   }
+  const sortedBooks = savedData.sort((a, b) => a.title.localeCompare(b.title));
 let finalData={
   count:count,
-  data:savedData
+  data:sortedBooks
 }
   return res.status(200).send({ status: true, message: "success",data: finalData })
 }
@@ -98,84 +100,38 @@ const updateBook=async function (req,res){
     }
     let requestBody=req.body;
     let {title,excerpt,releasedAt,ISBN}=requestBody;
-    if (title)
-    {
-       if (title)
-       {
-         return res
-        .status(400)
-        .send({status:false,message:"Provide a valid Title"});
-       }
-      if (excerpt)
-      {
-        if(excerpt){
-          return res
-          .status(400)
-          .send({Status:false,message:"[provide a valid excerpt"});
-        }
-      }
-      if (userId) 
-      {
+
+    let findTitle = await bookModel.findOne({ title: title });
+    if (findTitle) {
         return res
-          .status(400)
-          .send({ status: false, message: "User Id is required" });
-      }
-      if (ISBN) {
-        return res
-          .status(400)
-          .send({ status: false, message: " ISBN is required" });
-      }
-      if (ISBN) {
-        return res.status(400).send({
-          status: false,
-          message: "  ISBN and should be 10 or 13 digits",
-        });
-      }
-      if (category){
-        return res.status(400).send({
-          status: false,
-          message: "Please provide a category or a Valid category",
-        });
-      }
-
-  if (subcategory) {
-      return res.status(400).send({
-        status: false,
-        message: "Please provide a subcategory or a Valid subcategory",
-      });
+            .status(400)
+            .send({ status: false, message: "Title should be unique" });
     }
-    if (releasedAt) 
+            let findISBN = await bookModel.findOne({ ISBN: ISBN });
+            if (findISBN) {
+               return  res
+                    .status(400)
+                    .send({ status: false, message: "ISBN should be unique" });
+            }
+
+  let bookUpdated = await bookModel.findOneAndUpdate(
+    { _id: bookId },
     {
-      return res.status(400).send(
-      {
-        status: false,
-        message: "please provide releaseAt or valid releasedAt",});
-    }
+      $set: {
+        title: title,
+        excerpt:excerpt,
+        releasedAt:releasedAt,
+        ISBN:ISBN,
+      },
+    }, 
+    { new: true }
+  );
 
-    }
-    let bookUpdated = await bookModel.findOneAndUpdate(
-      { _id: bookId },
-      {
-        $set: {
-          title: requestBody.title,
-          excerpt: requestBody.excerpt,
-          releasedAt: requestBody.releasedAt,
-          ISBN: requestBody.ISBN,
-          category: requestBody.category,
-          subcategory: requestBody.subcategory,
-          reviews:requestBody.reviews,
-          releasedAt:requestBody.releasedAt
-
-        },
-      }, 
-      { new: true }
-    );
-
-    return res.status(200).send({
-      status: true,
-      message: "Book Data Updated Successfully",
-      data: bookUpdated,
-    });
+  return res.status(200).send({
+    status: true,
+    message: "Book Data Updated Successfully",
+    data: bookUpdated,
+  });
   } catch (error) {
     return res.status(500).send({ status: false, message: error.message });
   }
@@ -207,7 +163,7 @@ const deleteBook = async function (req, res)  {
     if (!updateData)
       return res.status(404).send({ msg: "This document dose not exist" });
 
-    res.status(200).send({ status: true, msg: updateData });
+    res.status(200).send({ status: true, message:"your book is deleted successfully." });
   } catch (error) {
     res.status(500).send({ msg: error.message });
   }

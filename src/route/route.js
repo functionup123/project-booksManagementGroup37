@@ -1,10 +1,10 @@
 const express = require("express");
 const route = express.Router();
 const createUserValiation=require("../middleware/userValidation")
-const createBookValiation=require("../middleware/bookValidation")
+const bookValiation=require("../middleware/bookValidation")
 const userController=require('../contoller/userController')
 const bookController=require('../contoller/bookController')
-const middleware=require('../middleware/middleware')
+const auth=require('../middleware/middleware')
 
 
 
@@ -17,16 +17,20 @@ route.post('/register',createUserValiation.cuv,userController.createUser)
 
 route.post('/login', userController.loginUser)
 
-route.post('/books',middleware. authentication, createBookValiation.cbv, bookController.createBook)
+route.post('/books',auth. authentication, bookValiation.cbv, bookController.createBook)
 
-route.get('/books',middleware. authentication,bookController.getBooks)
+route.get('/books',auth. authentication,bookController.getBooks)
 
-route.get('/books/:bookId', bookController.getBooksByParams)
+route.get('/books/:bookId',auth.authentication, bookController.getBooksByParams)
 
-route.put("/books/:bookId",middleware. authentication,  bookController.updateBook);
+route.put("/books/:bookId",auth. authentication,auth.authorisation, bookValiation.ubv, bookController.updateBook);
 
-route.delete('/books/:bookId', middleware.authentication ,middleware.authorisation, bookController.deleteBook)
+route.delete('/books/:bookId', auth.authentication ,auth.authorisation, bookController.deleteBook)
 
 
+route.all("/*", function (req, res) {
+  res.status(400).send({status: false, message: "Make Sure Your Endpoint is Correct !!!"
+  });
+});
 
 module.exports = route;
