@@ -85,7 +85,7 @@ const loginUser = async function (req, res) {
       let Token={
         token:token,
         userId:user._id.toString(),
-        expiry: "24h",  
+        expiry: "24 hour",  
         iat:moment().format('MMMM Do YYYY, h:mm:ss a')
       }
     res.status(200).send({ status: true, message: "Success", data: Token });

@@ -1,10 +1,9 @@
 const mongoose= require("mongoose")
-//const booksModel = require("../models/BooksModel")
-const ObjectId=mongoose.Schema.Types.ObjectId
+const objectId=mongoose.Schema.Types.ObjectId
 
 
 let reviewSchema= new mongoose.Schema({
-    bookId: {type:String, required:true  }, //ref
+    bookId: {type:objectId, required:true, ref:"Book" }, //ref
     reviewedBy: {type:String, required:true}, //default:'Guest'
     reviewedAt: {type:Date, required:true},
     rating: {type:Number, required:true}, //, min 1, max 5

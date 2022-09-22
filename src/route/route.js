@@ -14,8 +14,19 @@ route.get("/test-me", (req, res) => {
   });
   
 route.post('/register',createUserValiation.cuv,userController.createUser)
+
 route.post('/login', userController.loginUser)
-route.post('/books',middleware. authentication,createBookValiation.cbv, bookController.createBook)
+
+route.post('/books',middleware. authentication, createBookValiation.cbv, bookController.createBook)
+
 route.get('/books',middleware. authentication,bookController.getBooks)
+
 route.get('/books/:bookId', bookController.getBooksByParams)
+
+route.put("/books/:bookId",middleware. authentication,  bookController.updateBook);
+
+route.delete('/books/:bookId', middleware.authentication ,middleware.authorisation, bookController.deleteBook)
+
+
+
 module.exports = route;
