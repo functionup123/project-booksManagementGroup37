@@ -3,7 +3,7 @@ const reviewModel=require('../models/reviewModel')
 const mongoose = require('mongoose')
 
 
-
+//-----------------> createBook ------------------>
 const createBook=async function(req,res){
   try { 
     let bookData=req.body
@@ -15,7 +15,7 @@ catch(err){
 }
 }
 
-
+//-----------------> getBooks ------------------>
 const getBooks = async function (req, res) {
 try {
 let { userId, category, subcategory} = req.query
@@ -42,7 +42,7 @@ catch (err) {
   res.status(500).send({ status: false, message: err.message })
 }
 }
-//-------------------------------------------------------------------------//
+//----------------------------- getBooksByparams --------------------------------------------//
 const getBooksByParams = async function (req, res) {
   
   try {
@@ -66,9 +66,9 @@ const getBooksByParams = async function (req, res) {
           });
       }
       // review alike
-      const { title, excerpt, userId,ISBN,category,subcategory,isDeleted,releasedAt } = isValid
-       const review = await reviewModel.find({bookId : isValid._id }).select({ bookId:1,reviewedBy:1,reviewedAt:1,rating:1,review:1 })
-
+      const { title, excerpt, userId,ISBN,category,subcategory,isDeleted,releasedAt,reviews } = isValid
+      const review = await reviewModel.find({bookId : isValid._id }).select({ bookId:1,reviewedBy:1,reviewedAt:1,rating:1,review:1 })
+      
       const data = {
           title: title,
           excerpt: excerpt,
@@ -78,7 +78,8 @@ const getBooksByParams = async function (req, res) {
         subcategory:subcategory,
         isDeleted:isDeleted,
         releasedAt:releasedAt,
-         reviews: review.length ? review : { message: "0 review for this Book." }
+        reviews:reviews,
+         allReviews: review.length ? review : { message: "0 review for this Book." }
       }
       return res.status(200).send({ status: true,message: "success", data: data })
 
@@ -87,8 +88,8 @@ const getBooksByParams = async function (req, res) {
   }
 };
 
-//-------------------------------------------------------------------//
-///update//
+//----------------------------> updateBook<---------------------------------------//
+
 const updateBook=async function (req,res){
   try{
     let bookId=req.params.bookId;
@@ -136,7 +137,7 @@ const updateBook=async function (req,res){
     return res.status(500).send({ status: false, message: error.message });
   }
 };
-//---------------------------------------------------------------------------------------------//
+//----------------------------------------> deleteBook <-----------------------------------------------------//
 const deleteBook = async function (req, res)  {
   try {
     let inputId = req.params.bookId;

@@ -1,5 +1,6 @@
 const bookModel = require("../models/booksModel");
 
+//-----------------> createBookValidation <------------------------
 const cbv = async function (req, res, next) {
   try {
     let data = req.body;
@@ -101,6 +102,8 @@ const cbv = async function (req, res, next) {
   }
 };
 
+//-----------------> updateBookValidation <------------------------
+
 const ubv = function (req, res, next) {
   try {
     let requestBody=req.body;
@@ -120,17 +123,17 @@ const ubv = function (req, res, next) {
           message: "numeric values and special characters not allowed in excerpt",
         });
       }
-    //   if (!/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/.test({releasedAt:releasedAt})) {
-    //     return res
-    //         .status(400)
-    //         .send({ status: false, message: "give date in yyyy-mm-dd format" });
+      if(releasedAt && (!/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/.test({releasedAt:releasedAt}))) {
+        return res
+            .status(400)
+            .send({ status: false, message: "give date in yyyy-mm-dd format" });
 
-    // }
-    // if (!/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/.test(ISBN)) {
-    //     return res
-    //       .status(400)
-    //       .send({ status: false, message: "valid ISBN should be 13 numbers" });
-     //  }
+    }
+    if (ISBN && (!/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/.test(ISBN))) {
+        return res
+          .status(400)
+          .send({ status: false, message: "valid ISBN should be 13 numbers" });
+      }
 
       next()
     }
