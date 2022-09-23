@@ -26,9 +26,9 @@ const createReview = async function (req, res) {
 
         if (!bookId) { return res.status(400).send({ status: false, message: "bookId is mandatory" }) }
         //if (!reviewedBy) { return res.status(400).send({ status: false, message: "reviewedBy is mandatory" }) }
-if(reviewedBy==undefined || reviewedBy==null || reviewedBy==""){
-reviewedBy.$set('Guest')
-}
+//if(reviewedBy==undefined || reviewedBy==null || reviewedBy==""){
+//reviewedBy.$set('Guest')
+//}
 
         if (!reviewedAt) { return res.status(400).send({ status: false, message: "reviewedAt is mandatory" }) }
         if (!rating) { return res.status(400).send({ status: false, message: "rating is mandatory" }) }
@@ -39,7 +39,7 @@ reviewedBy.$set('Guest')
      //   let createdReview = await reviewModel.create(data)
         let updatedBooksdata = { updatedBooks }
 
-        updatedBooksdata.reviewsData = createdReview
+        updatedBooksdata.reviewsData = createReview
         return res.status(201).send({ status: true, message: 'Success', data: updatedBooksdata })
 
     }
@@ -50,7 +50,57 @@ reviewedBy.$set('Guest')
 
 //-----------> updateReviewById ------------>//
 
+const updateReview = async function (req, res) 
+{
+    try {
+        let reviewId = req.params.reviewId
+        let bookId = req.params.bookId
 
+        if(!isValid(bookId))
+        {
+            return res.status(400).send({status : false, mssg : "BookId is not valid"})
+        }
+        if(!isValid(reviewId))
+        {
+            return res.status(400).send({status : false, mssg : "reviewId is not valid"})
+        }
+
+        let findBook = await bookModel.findOne({_id : bookId, isDeleted : false})
+        if(!findBook)
+        {
+            return res.status(404).send({ status : false, mssg : "BookId is not found"})
+        }
+
+        let data = req.body 
+        let {review, rating, reviewedBy} = data
+        
+        let dataBody = Object.keys(data)
+        if(dataBody.length == 0)
+        {
+            return res.status(400).send({ status : false, mssg : "DataBody can not be empty"})
+        }
+        
+        let updatedReview = await reviewModel.findByIdAndUpdate({ _id: reviewId, isDeleted: false }).select({_id : 1, bookId : 1, reviewedBy:1, reviewedAt:1, rating:1, review:1})
+        let object =
+        {
+            _id: findBook._id,
+                title: findBook.title,
+                excerpt: findBook.excerpt,
+                userId: findBook.userId,
+                category: findBook.category,
+                subcategory: findBook.subcategory,
+                isDeleted: findBook.isDeleted,
+                reviews: findBook.reviews,
+                releasedAt: findBook.releasedAt,
+                createdAt: findBook.createdAt,
+                updatedAt: findBook.updatedAt,
+                updatedReview: updatedReview
+       }
+            return res.status(200).send({status: true, mssg : object})
+            }catch (err) {
+        return res.status(500).send({ error: err.message });
+    }
+}
 
 
 
@@ -103,6 +153,4 @@ const deleteReviwsById = async function (req, res) {
 
 
 
-module.exports = {
-    createReview, deleteReviwsById
-}
+module.exports = {createReview,updateReview , deleteReviwsById}
