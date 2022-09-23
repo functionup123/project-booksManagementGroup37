@@ -152,7 +152,7 @@ const deleteBook = async function (req, res)  {
       isDeleted: true,
     });
     if (deleteAlert)
-      return res.status(404).send({ msg: "This blog is already deleted" });
+      return res.status(404).send({ status:false,message: "This blog is already deleted" });
 
     let updateData = await bookModel.findOneAndUpdate(
       { _id: inputId },
@@ -161,7 +161,7 @@ const deleteBook = async function (req, res)  {
     );
 
     if (!updateData)
-      return res.status(404).send({ msg: "This document dose not exist" });
+      return res.status(404).send({ status: false,message: "This document dose not exist" });
 
     res.status(200).send({ status: true, message:"your book is deleted successfully." });
   } catch (error) {
