@@ -3,6 +3,8 @@ const bookModel = require("../models/BooksModel");
 const userModel = require("../models/userModel");
 const mongoose=require('mongoose')
 
+
+//------------------> authentication <-------------------------------
 const authentication = async function (req, res, next) {
   try {
     let token = req.headers["x-api-key"];
@@ -22,6 +24,8 @@ const authentication = async function (req, res, next) {
     return res.status(500).send({ msg: error.message });
   }
 };
+
+//------------------> authorisation <-------------------------------
 
 let authorisation =async function (req, res, next) {
       try {
