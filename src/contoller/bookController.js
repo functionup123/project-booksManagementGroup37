@@ -20,7 +20,10 @@ const getBooks = async function (req, res) {
 try {
 let { userId, category, subcategory} = req.query
   let filter= {isDeleted:false}
- 
+
+  let isValid = mongoose.Types.ObjectId.isValid(userId);
+  if(userId &&  !isValid){return res.status(400).send({ msg: "enter valid object id" });}
+
   if (userId) { filter.userId = userId }
   if (category) { filter.category = category }
   if (subcategory) { filter.subcategory =subcategory  }
@@ -34,7 +37,7 @@ let { userId, category, subcategory} = req.query
   const sortedBooks = savedData.sort((a, b) => a.title.localeCompare(b.title));
 let finalData={
   count:count,
-  data:sortedBooks
+  bookData:sortedBooks
 }
   return res.status(200).send({ status: true, message: "success",data: finalData })
 }
@@ -143,7 +146,7 @@ const deleteBook = async function (req, res)  {
     let inputId = req.params.bookId;
 
     let isValid = mongoose.Types.ObjectId.isValid(inputId);
-    if (!isValid) return res.status(400).send({ msg: "enter valid object tid" });
+    if (!isValid) return res.status(400).send({ msg: "enter valid object id" });
 
 
     let date =Date.now()
