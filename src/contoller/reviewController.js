@@ -27,9 +27,9 @@ const createReview = async function (req, res) {
 
         if (!bookId) { return res.status(400).send({ status: false, message: "bookId is mandatory" }) }
         //if (!reviewedBy) { return res.status(400).send({ status: false, message: "reviewedBy is mandatory" }) }
-// if(reviewedBy==undefined || reviewedBy==null || reviewedBy==""){
-// reviewedBy.$set('Guest')
-// }
+//if(reviewedBy==undefined || reviewedBy==null || reviewedBy==""){
+//reviewedBy.$set('Guest')
+//}
 
       //  if (!reviewedAt) { return res.status(400).send({ status: false, message: "reviewedAt is mandatory" }) }
         if (!rating) { return res.status(400).send({ status: false, message: "rating is mandatory" }) }
@@ -40,7 +40,7 @@ const createReview = async function (req, res) {
        let createdReview = await reviewModel.create(data)
         let updatedBooksdata = { updatedBooks }
 
-        updatedBooksdata.reviewsData = createdReview
+        updatedBooksdata.reviewsData = createReview
         return res.status(201).send({ status: true, message: 'Success', data: updatedBooksdata })
 
     }
